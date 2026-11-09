@@ -35,8 +35,24 @@ downloaded (the tar or its unpacked folder). Everything lands in `--out` (defaul
 - `report.json`: label counts, held-out scores for the model and for the rule-based
   analysers, and the confusion matrices.
 
-To put it on a unit, replace `models/pod-state.json` in a core PR (it then ships with the
-release), with a new `--version` so its results sit beside the previous model's.
+## Put it on a unit
+
+Upload it as a model revision (core #186). It needs the unit's result ingest token
+(**Settings → Off-device storage and analysis**) and the file's SHA-256:
+
+```sh
+curl -X POST "http://seedypod.local/api/models?sha256=$(shasum -a 256 data/run/pod-state.json | cut -d' ' -f1)&enable=1" \
+  -H "Authorization: Bearer $SEEDYPOD_INGEST_TOKEN" --data-binary @data/run/pod-state.json
+```
+
+An agent can do the same with core's MCP `upload_model`. An enabled revision runs on every
+capture as `pod-state-<revision>`, beside the shipped model and the rule-based analysers on
+the Analysis screen. `set_model` (or `PATCH /api/models/{id}`) enables, disables or makes a
+revision primary; `reset` goes back to the shipped model and `rollback` undoes the newest
+change. Uploading writes to the unit, so ask its owner first.
+
+To ship a model with every unit instead, replace `models/pod-state.json` in a core PR, with
+a new `--version` so its results sit beside the previous model's.
 
 ## Labels
 
