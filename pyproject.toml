@@ -1,0 +1,33 @@
+[project]
+name = "seedypod-training"
+version = "0.1.0"
+description = "Off-device training for seedypod's on-device pod-state classifier"
+license = "AGPL-3.0-only"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+  "numpy==2.2.6",
+  "pillow==11.3.0",
+  "torch==2.8.0",
+]
+
+[dependency-groups]
+dev = ["ruff==0.12.11"]
+
+[tool.uv]
+package = false
+
+# CPU wheels on Linux (CI): the default PyPI torch wheel for Linux pulls CUDA, several GB.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.ruff]
+line-length = 150
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
